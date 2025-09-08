@@ -23,4 +23,4 @@ The final system achieved excellent performance on the test set:
 
 ## References
 
-- [SemEval-2020 Task 5: Detecting Counterfactuals](https://semeval.github.io/2020/task5/)
+- [SemEval-2020 Task 5]([https://semeval.github.io/2020/task5/](https://aclanthology.org/2020.semeval-1.40.pdf))

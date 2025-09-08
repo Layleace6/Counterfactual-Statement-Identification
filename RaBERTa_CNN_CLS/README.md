@@ -1,88 +1,26 @@
-# ISCAS-SemEval2020Task5
+# Counterfactual Statement Identification
 
-- Code for [``ISCAS at SemEval-2020 Task 5: Pre-trained Transformers for Counterfactual Statement Modeling``](https://luyaojie.github.io/pdf/lusemeval2020.pdf)
-- Please contact [Yaojie Lu](http://luyaojie.github.io) ([@luyaojie](mailto:yaojie.lu@outlook.com)) for questions and suggestions.
+This project is a course assignment for Fudan University, Spring 2025. The project is inspired by the SemEval-2020 Task 5 dataset and focuses on identifying counterfactual statements in text.
 
-## Requirements
+## Project Overview
 
-General
+We built a counterfactual statement identification system based on the SemEval-2020 Task 5 dataset. The main contributions and methods of our work include:
 
-- Python (verified on 3.7.)
-- unzip (for running data_preprocessing.sh only)
+- **Fine-tuning Pretrained Language Models**: We fine-tuned mainstream pretrained models such as BERT, RoBERTa, and XLNet for the counterfactual statement classification task. Model ensembling was employed to further improve overall performance.  
 
-Python Packages
+- **Data Augmentation with Large Language Models**: To address class imbalance and enhance data diversity, we generated counterfactual samples using large language models.  
 
-- allennlp==0.9.0
-- transformers==2.4.1
-- sklearn
+- **Multi-task Learning Framework**: We designed a multi-task learning framework by adding temporal identification as an auxiliary task. This improves the model's ability to recognize counterfactual statements with specific temporal contexts.  
 
-```shell
-conda create -n iscas-se python=3.7
-conda activate iscas-se
-pip install -r requirements.txt
-```
+- **Parameter-Efficient Fine-Tuning with LoRA**: We applied Low-Rank Adaptation (LoRA) techniques for parameter-efficient fine-tuning, achieving over 50% training speedup while compressing model parameters to approximately 1% of the original size.  
 
-## Pre-processing
+## Results
 
-First, prepare data, and preprocess datasets and save train sets at ``$PWD/data/train_data/`` and online evaluation sets at ``$PWD/data/eval_data/``.
+The final system achieved excellent performance on the test set:  
 
-```shell
-bash data_preprocessing_zenodo.bash
-```
+- **Recall**: 0.9187  
+- **F1 Score**: 0.9088  
 
-## Subtask 1
+## References
 
-### Run training for Subtask 1
-
-RoBERTa Large + CLS Aggregation
-
-```shell
-cd subtask1/easyclassification
-bash exp_scripts/run.exp.roberta.large.bash
-```
-
-RoBERTa Large + CNN Aggregation
-
-```shell
-cd subtask1/easyclassification
-bash exp_scripts/run.exp.cnn.robert-large.finetune.bash
-```
-
-### Run prediction on Subtask 1
-
-```shell
-python -m classificationnet.running.ensemble \
-  -device 4 \
-  -data <path-to-dev-output-jsonl> \
-  -model model/subtask1_cnn_roberta-large_cv*_ch300_cw3/ model/subtask1_roberta-large_cv*_5e-6 \
-  -metadata sentenceID \
-  -output <path-to-dev-output-jsonl>
-
-python scripts/classification_pred_to_subtask1.py \
-  -pred <path-to-dev-output-jsonl> \
-  -output <path-to-dev-output-csv>
-```
-
-for example:
-```shell
-python -m classificationnet.running.ensemble \
-  -device 0 \
-  -data subtask1_test.jsonl \
-  -model model/subtask1_aug_finetune_cnn_roberta-large_cv1_ch300_cw3_lr5e-6 \
-  -output model/subtask1_aug_finetune_cnn_roberta-large_cv1_ch300_cw3_lr5e-6/output.jsonl
-```
-
-### Run models with augmentation
-
-Load the data:
-```shell
-bash data_preprocessing_augment.bash
-```
-
-Modify model bash : `#5  export DATA_FOLDER='../../data/train_data/subtask1_augment'`
-
-Then run models:
-```shell
-cd subtask1/easyclassification
-bash exp_scripts/run.exp.roberta.large.bash
-```
+- [SemEval-2020 Task 5: Detecting Counterfactuals](https://semeval.github.io/2020/task5/)
